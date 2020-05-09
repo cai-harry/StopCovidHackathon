@@ -15,7 +15,8 @@
     "react-dom": "^16.13.1",
     "react-dropzone": "^11.0.1",
     "react-scripts": "3.4.1",
-    "superagent": "^5.2.2"
+    "superagent": "^5.2.2",
+    "web3": "^1.2.7"
   },
   "scripts": {
     "start": "react-scripts start",

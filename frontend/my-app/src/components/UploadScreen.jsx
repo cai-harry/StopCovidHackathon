@@ -1,6 +1,14 @@
 import React, {useMemo} from 'react';
 import {useDropzone} from 'react-dropzone';
 
+
+const Web3 = require('web3');
+
+const web3 = new Web3(
+//  new Web3.providers.HttpProvider('https://mainnet.infura.io/'),
+  new Web3.providers.HttpProvider("http://127.0.0.1:7545")
+);
+
 const baseStyle = {
   flex: 1,
   display: 'flex',
@@ -63,12 +71,19 @@ function UploadScreen(props) {
     return;
   }
 
+  const getLatestBlock = () => {
+    web3.eth.getBlock('latest').then(
+      latestBlock => {
+        console.log(latestBlock.hash);
+      });
+  }
 
   return (
     <div className="container">
       <div {...getRootProps({style})}>
         <input {...getInputProps()} />
-        <p>Drag and drop / click upload to select python file containing model code </p>
+        <p>Drag and drop / click upload to select python file containing model code</p>
+        <p>Latest block hash {getLatestBlock()}</p>
         <button type="button" onClick={open}>
           Upload
         </button>
