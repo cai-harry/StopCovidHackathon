@@ -18,7 +18,7 @@ class UploadScreen extends Component {
   checkMimeType = (event) => {
     let file = event.target.files[0];
     let err = '';
-    const expected_type = 'text/x-python';
+    const expected_type = 'text/plain';
     if (file.type !== expected_type) {
       err = file.type + ' is not a supported format!';
       console.log(err);

@@ -1,5 +1,5 @@
 import json
-from web3 import Web3, HTTPProvider
+import os
 
 
 class ContractClient:
@@ -9,17 +9,20 @@ class ContractClient:
     The API of this class should match that of the smart contract.
     """
 
-    CONTRACT_JSON_PATH = "build/contracts/Contributions.json"
-    IPFS_HASH_PREFIX = bytes.fromhex('1220')
+    CONTRACT_JSON_PATH = os.path.normpath(os.path.join(
+        "..", "..", "build", "contracts", "Contributions.json"))
 
     def __init__(self,
-                 web3_provider=HTTPProvider("http://127.0.0.1:7545"),
+                 web3,
                  account_idx=0
                  ):
-        self._web3 = Web3(web3_provider)
-        self._contract = self._deploy_contract()
+        """
+        web3: an instantiated web3 provider, such as `Web3(HTTPProvider("http://127.0.0.1:7545"))`
+        """
+        self._web3 = web3
         self._address = self._web3.eth.accounts[account_idx]
         self._web3.eth.defaultAccount = self._address
+        self._contract = self._deploy_contract()
 
     def owner(self):
         return self._contract.functions.owner().call()
@@ -27,7 +30,7 @@ class ContractClient:
     def tokens(self, address):
         return self._contract.functions.tokens(address).call()
 
-    def totalTokens(self, address):
+    def totalTokens(self):
         return self._contract.functions.totalTokens().call()
 
     def balance(self, address):
@@ -45,11 +48,14 @@ class ContractClient:
             crt_json = json.load(crt_json_file)
             abi = crt_json['abi']
             bytecode = crt_json['bytecode']
-        instance = self._web3.eth.contract(
+        Contributions = self._web3.eth.contract(
             abi=abi,
             bytecode=bytecode
         )
+        tx_hash = Contributions.constructor().transact()
+        tx_receipt = self._web3.eth.waitForTransactionReceipt(tx_hash)
+        instance = self._web3.eth.contract(
+            address=tx_receipt.contractAddress,
+            abi=abi
+        )
         return instance
-
-
-contract = ContractClient()
