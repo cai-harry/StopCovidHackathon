@@ -1,6 +1,6 @@
 Flask
-torch
 syft
 sklearn
 pandas
 joblib
+web3==5.9.0
