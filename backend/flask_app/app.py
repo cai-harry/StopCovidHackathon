@@ -56,7 +56,7 @@ def upload_file():
         filename = secure_filename(file.filename)
         file.save(filename)
     else:
-        print("Invalid filename. File must be named model.py")
+        print("Invalid filename. File must be named net.py")
         abort(500)
     
     model = load_model(filename)
@@ -66,6 +66,13 @@ def upload_file():
     response = Response(response=json.dumps(metrics),
                         status=200,
                         mimetype='application/json')
+
+
+    # TODO: Remove this when actual code is implemented. 
+    # Just here to show the front-end works as intended
+    import time
+    time.sleep(10)
+
     return response
 
 @app.route('/api/download')
