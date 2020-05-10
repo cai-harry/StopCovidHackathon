@@ -1,3 +1,6 @@
+import syft as sy
+import torch
+
 def generate_virtual_workers(n, hook):
   workers = []
   for i in range(n):

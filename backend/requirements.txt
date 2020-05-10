@@ -2,3 +2,4 @@ Flask
 torch
 syft
 sklearn
+pandas

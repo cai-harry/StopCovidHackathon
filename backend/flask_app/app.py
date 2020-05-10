@@ -6,9 +6,8 @@ import torch.optim as optim
 import joblib
 import time
 import numpy as np
-import matplotlib.pyplot as plt
 from flask import Flask, request, abort, Response, json, send_from_directory
-rom sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split
 from werkzeug.utils import secure_filename
 import data_utils
 import syft as sy
@@ -31,7 +30,7 @@ def init_syft_workers():
     # create 3 workers and split the data between them
     # aggregator for now just: hosts the data, tests the model
     # for future discussion: MPC, Rewards, Crypto provider
-    workers = generate_virtual_workers(number_of_workers, hook)
+    workers = data_utils.generate_virtual_workers(number_of_workers, hook)
     central_server = sy.VirtualWorker(hook, id="aggregator")
 
     # Use sklearn to split into train and test
@@ -40,13 +39,13 @@ def init_syft_workers():
 
     # Create a federated dataset using BaseDataset for all train
     # frames and randomly share them in an IID manner between clients
-    record_list, result_list = split_into_lists(X_train, y_train)
-    record_list = convert_to_tensors(record_list)
+    record_list, result_list = data_utils.split_into_lists(X_train, y_train)
+    record_list = data_utils.convert_to_tensors(record_list)
     base_federated_set = sy.BaseDataset(record_list, result_list).federate(workers)
     federated_train_loader = sy.FederatedDataLoader(base_federated_set)
 
-    test_list, test_labels = split_into_lists(X_val, y_val)
-    test_list = convert_to_tensors(test_list)
+    test_list, test_labels = data_utils.split_into_lists(X_val, y_val)
+    test_list = data_utils.convert_to_tensors(test_list)
     test_dataset = sy.BaseDataset(test_list, test_labels)
     test_loader = torch.utils.data.DataLoader(test_dataset)
     # TODO: Implement, make necessary imports and
@@ -87,7 +86,6 @@ def train(model, federated_train_loader, optimizer, epoch):
 
 def train_model(model):
     optimizer = optim.SGD(model.parameters(), lr=learning_rate)
-    %%time
     # init hyperparameters
     for epoch in range(1, epochs + 1):
         train(model, federated_train_loader, optimizer, epoch)
@@ -130,12 +128,6 @@ def upload_file():
     response = Response(response=json.dumps(metrics),
                         status=200,
                         mimetype='application/json')
-
-
-    # TODO: Remove this when actual code is implemented.
-    # Just here to show the front-end works as intended
-    import time
-    time.sleep(10)
 
     return response
 
