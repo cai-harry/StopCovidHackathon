@@ -73,7 +73,7 @@ def train(model, federated_train_loader, optimizer, epoch):
     for batch_idx, (data, target) in enumerate(federated_train_loader):
         model.send(data.location)
         optimizer.zero_grad()
-        output = model(data)
+        output = model(data.float())
         loss = loss_criterion(output, target.float())
         loss.backward()
         optimizer.step()
