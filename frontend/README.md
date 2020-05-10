@@ -28,3 +28,9 @@ You can tell nvm which version to use in each new shell with ```$ nvm use #.#.#`
 # 3. Run the front-end
 
 ```$ npm start```
+
+Also ensure you have the Chrome CORS plugin installed and enabled.
+
+# 4. Run the back-end
+
+See back-end README for instructions

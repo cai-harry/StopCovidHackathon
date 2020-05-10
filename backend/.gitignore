@@ -1,0 +1,5 @@
+venv/
+.vscode/
+__pycache__
+flask_app/model.pt
+flask_app/net.py

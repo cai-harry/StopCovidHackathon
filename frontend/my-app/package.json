@@ -8,14 +8,16 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "@types/material-ui": "^0.21.7",
+    "animate.css": "^4.0.0",
     "axios": "^0.19.2",
+    "js-file-download": "^0.4.12",
     "material-ui": "^0.20.2",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
     "react-dom": "^16.13.1",
-    "react-dropzone": "^11.0.1",
-    "react-scripts": "3.4.1",
     "superagent": "^5.2.2",
+    "react-notifications-component": "^2.4.0",
+    "react-scripts": "3.4.1",
     "web3": "^1.2.7"
   },
   "scripts": {
