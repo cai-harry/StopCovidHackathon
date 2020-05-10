@@ -1,5 +1,6 @@
 Flask
-torch
+torch  # install this using conda
 syft
 sklearn
 pandas
+web3  # for smart contract interactions
