@@ -1,5 +1,8 @@
 import React, {useMemo} from 'react';
 import {useDropzone} from 'react-dropzone';
+import { store } from 'react-notifications-component';
+import 'react-notifications-component/dist/theme.css';
+import 'animate.css';
 
 const baseStyle = {
   flex: 1,
@@ -51,16 +54,22 @@ function UploadScreen(props) {
     isDragAccept
   ]);
 
-  const file = acceptedFiles.map(f => <li key={f.path}>{f.path}</li>)[0];
+  let file = acceptedFiles.length > 0 ? acceptedFiles[0].path : "";
 
   const renderSuccessMessage = ()=>{
-    if(file !== undefined){
-      return <h3>{file} uploaded successfully</h3>
+    if(file !== ""){
+      store.addNotification({
+        title: 'Upload successful',
+        message: 'The model will now be trained. Download and metrics will be available on completion',
+        type: 'success',                         
+        container: 'bottom-center',              
+        animationIn: ["animated", "fadeIn"], 
+        animationOut: ["animated", "fadeOut"],
+        dismiss: {
+          duration: 10000 
+        }
+      })
     }
-  }
-
-  const renderTrainBanner = ()=>{
-    return;
   }
 
 
@@ -73,10 +82,7 @@ function UploadScreen(props) {
           Upload
         </button>
       </div>
-      <aside>
-        {renderSuccessMessage()}
-        {renderTrainBanner()}
-      </aside>
+      {renderSuccessMessage()}
     </div>
   );
 }
