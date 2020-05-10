@@ -85,6 +85,18 @@ class UploadScreen extends Component {
           training: false,
         });
 
+      }).catch(error => {
+        store.addNotification({
+          title: 'Server Error',
+          message: 'There is a problem with the back-end server that prevented the request from being completed',
+          type: 'danger',
+          container: 'bottom-center',
+          animationIn: ["animated", "fadeIn"],
+          animationOut: ["animated", "fadeOut"],
+          dismiss: {
+            duration: 15000
+          }
+        })
       });
   }
 
@@ -134,13 +146,25 @@ class UploadScreen extends Component {
             dismiss: {
               duration: 5000
             }
-          })
+          });
 
           this.setState({
             training_completed: true,
           });
         }
-      );
+      ).catch(error => {
+        store.addNotification({
+          title: 'Server Error',
+          message: 'There is a problem with the back-end server that prevented the request from being completed',
+          type: 'danger',
+          container: 'bottom-center',
+          animationIn: ["animated", "fadeIn"],
+          animationOut: ["animated", "fadeOut"],
+          dismiss: {
+            duration: 15000
+          }
+        });
+      });
   }
 
   renderUploadButton = () => {
