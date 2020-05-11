@@ -158,12 +158,13 @@ def train_model(model):
     metrics['accuracy'] = test_accuracy
 
     # get token counts for each worker; share of tokens = contributivity
-    for worker in workers:
+    contrib_keys = ['contrib_a', 'contrib_b', 'contrib_c']
+    for worker, key in zip(workers, contrib_keys):
         address = worker_eth_accounts[worker.id]
         tokens = contract.tokens(address)
         total_tokens = contract.totalTokens()
         contrib = tokens / total_tokens
-        metrics[worker.id] = contrib
+        metrics[key] = contrib
 
     print(metrics)
 
