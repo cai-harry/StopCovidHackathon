@@ -102,9 +102,15 @@ def train(model, federated_train_loader, optimizer, epoch):
         test_loss_before, _ = test(model, test_loader)
         model.send(data.location)
         optimizer.zero_grad()
+<<<<<<< HEAD
         output = model(data)
         train_loss = loss_criterion(output, target.float())
         train_loss.backward()
+=======
+        output = model(data.float())
+        loss = loss_criterion(output, target.float())
+        loss.backward()
+>>>>>>> origin/master
         optimizer.step()
         model.get()
         test_loss_after, _ = test(model, test_loader)

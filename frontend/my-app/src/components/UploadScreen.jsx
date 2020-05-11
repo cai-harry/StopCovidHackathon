@@ -3,6 +3,37 @@ import axios from 'axios';
 import { store } from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css';
 import 'animate.css';
+import Web3 from 'web3'
+
+
+const getWeb3 = new Promise(function(resolve, reject) {
+  // Wait for loading completion before loading web3, to be sure it's
+  // already injected
+  window.addEventListener('load', function() {
+    var results
+    var web3 = window.web3
+    // Checking if Web3 has been injected by the browser MetaMask
+    if (typeof web3 !== 'undefined') {
+      // Use MetaMask's provider.
+      web3 = new Web3(web3.currentProvider)
+      results = {
+        web3: web3
+      }
+      console.log('Injected web3 detected.');
+      resolve(results)
+    } else {
+      // If no web3 is detected, then the local web3 provider is loaded.
+      var provider = new Web3.providers.HttpProvider('http://127.0.0.1:7545')
+      web3 = new Web3(provider)
+      results = {
+        web3: web3
+      }
+      console.log('No web3 instance injected, using Local web3.');
+      resolve(results)
+    }
+  })
+});
+
 
 class UploadScreen extends Component {
 
@@ -12,7 +43,19 @@ class UploadScreen extends Component {
       selectedFile: null,
       training: false,
       training_completed: false,
+      web3: null
     }
+  }
+
+
+  componentDidMount() {
+    getWeb3.then(w => {
+      console.log(w);
+      this.setState((state) => {
+        return {web3: w}
+      });
+      console.log(this.state);
+    })
   }
 
   checkMimeType = (event) => {
@@ -85,6 +128,18 @@ class UploadScreen extends Component {
           training: false,
         });
 
+      }).catch(error => {
+        store.addNotification({
+          title: 'Server Error',
+          message: 'There is a problem with the back-end server that prevented the request from being completed',
+          type: 'danger',
+          container: 'bottom-center',
+          animationIn: ["animated", "fadeIn"],
+          animationOut: ["animated", "fadeOut"],
+          dismiss: {
+            duration: 15000
+          }
+        })
       });
   }
 
@@ -134,13 +189,25 @@ class UploadScreen extends Component {
             dismiss: {
               duration: 5000
             }
-          })
+          });
 
           this.setState({
             training_completed: true,
           });
         }
-      );
+      ).catch(error => {
+        store.addNotification({
+          title: 'Server Error',
+          message: 'There is a problem with the back-end server that prevented the request from being completed',
+          type: 'danger',
+          container: 'bottom-center',
+          animationIn: ["animated", "fadeIn"],
+          animationOut: ["animated", "fadeOut"],
+          dismiss: {
+            duration: 15000
+          }
+        });
+      });
   }
 
   renderUploadButton = () => {

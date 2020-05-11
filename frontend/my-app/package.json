@@ -15,8 +15,10 @@
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
     "react-dom": "^16.13.1",
+    "superagent": "^5.2.2",
     "react-notifications-component": "^2.4.0",
-    "react-scripts": "3.4.1"
+    "react-scripts": "3.4.1",
+    "web3": "^1.2.7"
   },
   "scripts": {
     "start": "react-scripts start",

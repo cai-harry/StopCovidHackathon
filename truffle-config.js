@@ -8,7 +8,7 @@
  *
  * truffleframework.com/docs/advanced/configuration
  *
- * To deploy via Infura you'll need a wallet provider (like @truffle/hdwallet-provider)
+ * To deploy via Infura you'll need a wallet provider (like truffle-hdwallet-provider)
  * to sign your transactions before they're sent to a remote public node. Infura accounts
  * are available for free at: infura.io/register.
  *
@@ -18,11 +18,15 @@
  *
  */
 
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
+// const HDWalletProvider = require('truffle-hdwallet-provider');
 // const infuraKey = "fj4jll3k.....";
 //
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
+require('dotenv').config()
+
+const PrivateKeyProvider = require("truffle-hdwallet-provider");
+const privateKeyProvider = new PrivateKeyProvider(process.env.ACCOUNT_PRIVKEY, process.env.ENDPOINT_URL)
 
 module.exports = {
   /**
@@ -44,7 +48,7 @@ module.exports = {
     //
     // development: {
     //  host: "127.0.0.1",     // Localhost (default: none)
-    //  port: 8545,            // Standard Ethereum port (default: none)
+    //  port: 7545,            // Standard Ethereum port (default: none)
     //  network_id: "*",       // Any network (default: none)
     // },
 
@@ -70,11 +74,11 @@ module.exports = {
     // },
 
     // Useful for private networks
-    // private: {
-      // provider: () => new HDWalletProvider(mnemonic, `https://network.io`),
-      // network_id: 2111,   // This network is yours, in the cloud.
-      // production: true    // Treats this network as if it was a public net. (default: false)
-    // }
+    private: {
+      provider: privateKeyProvider,
+      network_id: process.env.ETH_NETWORK_ID,   // This network is yours, in the cloud.
+      production: false    // Treats this network as if it was a public net. (default: false)
+    }
   },
 
   // Set default mocha options here, use special reporters etc.
@@ -85,7 +89,7 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-      version: "0.6.1",    // Fetch exact version from solc-bin (default: truffle's version)
+       version: "0.6.1",    // Fetch exact version from solc-bin (default: truffle's version)
       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
       // settings: {          // See the solidity docs for advice about optimization and evmVersion
       //  optimizer: {

@@ -4,3 +4,8 @@ syft
 sklearn
 pandas
 web3  # for smart contract interactions
+syft
+sklearn
+pandas
+joblib
+web3==5.9.0
