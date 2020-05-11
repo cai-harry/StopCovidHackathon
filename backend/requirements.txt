@@ -3,9 +3,5 @@ torch  # install this using conda
 syft
 sklearn
 pandas
-web3  # for smart contract interactions
-syft
-sklearn
-pandas
+web3==5.9.0  # for smart contract interactions
 joblib
-web3==5.9.0
