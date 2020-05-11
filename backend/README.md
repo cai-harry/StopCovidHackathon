@@ -1,17 +1,49 @@
-# 1. Create Virtual Environment
+# Create Virtual Environment
 
-```$ python3 -m venv venv```
+Option A
+```
+$ python3 -m venv venv
+$ source venv/bin/activate
+$ pip install -r requirements.txt
+```
 
-```$ source venv/bin/activate```
+Option B (endorsed by @cai-harry: set up with VSCode)
+```
+conda create -n hack
+activate hack
+conda install pytorch==1.4.0 torchvision -c pytorch
+pip install -r requirements.txt
+```
 
-```$ pip install -r requirements.txt```
+# Compiling the smart contract
 
-# 2. Running the back-end
+Download [Truffle](https://www.trufflesuite.com/truffle)
+ 
+```
+npm install truffle -g
+```
+
+From repo root:
+```
+truffle build
+```
+
+It should create a file `build/contracts/Contributions.json` and `build/contracts/Migrations.json`.
+
+# Setting up the blockchain
+
+Download [Ganache](https://www.trufflesuite.com/ganache).
+
+Fire it up. Create a new workspace or use quick start.
+
+Check that the RPC server is running on `http://127.0.0.1:7545` (this is the default)
+
+# Running the back-end
 
 In the ```flask_app``` directory, run ```flask run```
 
 
-# 3. Uploading files to server
+# Uploading files to server
 
 In the event that the front-end is not yet working, 
 
@@ -22,7 +54,7 @@ Assuming the back-end started on port 5000.
 **Note**: To test that this works, run this in a separate terminal in a folder away from the back-end code
 
 
-# 4. Downloading trained model from server
+# Downloading trained model from server
 
 In the event that the front-end is not yet working,
 
