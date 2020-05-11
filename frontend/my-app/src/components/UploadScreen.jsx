@@ -5,7 +5,7 @@ import 'react-notifications-component/dist/theme.css';
 import 'animate.css';
 
 import { default as Web3} from 'web3';
-import Federated from "../Federated.json"
+import Federated from "../Contributions.json"
 
 
 class UploadScreen extends Component {
