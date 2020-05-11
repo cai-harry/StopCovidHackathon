@@ -170,14 +170,25 @@ class UploadScreen extends Component {
     const data = new FormData();
     data.append('model_file', this.state.selectedFile);
 
-    console.log(data);
+    const currentWeb3 = this.state.web3;
 
-    const valueToSend = window.web3.utils.toWei("1", 'Ether')
-    const accounts = await this.state.web3.eth.getAccounts()
+    const valueToSend = currentWeb3.utils.toWei("1", 'Ether');
+    const accounts = await currentWeb3.eth.getAccounts();
+    const federatedContract = this.state.federatedContract.methods;
 
-    this.state.federatedContract.methods.request_training("hello!")
-        .send( {from: accounts[0], value: valueToSend} )
-        .catch(err => console.log("Error ", err));
+    const reader = new FileReader();
+
+    reader.onload = function () {
+      const hexContent = currentWeb3.utils.toHex(reader.result);
+      const hashResult = currentWeb3.utils.soliditySha3(hexContent);
+      console.log(hashResult);
+
+      federatedContract.request_training(hashResult)
+          .send( {from: accounts[0], value: valueToSend} )
+          .catch(err => console.log("Error ", err));
+
+    };
+    reader.readAsBinaryString(this.state.selectedFile)
 
 
     let accuracy;
