@@ -64,11 +64,15 @@ class UploadScreen extends Component {
 
   }
 
+  hasElement = (array, value) => {
+    return array.indexOf( value ) !== -1;
+  };
+
   checkMimeType = (event) => {
     let file = event.target.files[0];
     let err = '';
-    const expected_type = 'text/plain';
-    if (file.type !== expected_type) {
+    const expected_types = ['text/plain', 'text/x-python'];
+    if (! this.hasElement(expected_types, file.type)) {
       err = file.type + ' is not a supported format!';
       console.log(err);
       store.addNotification({
