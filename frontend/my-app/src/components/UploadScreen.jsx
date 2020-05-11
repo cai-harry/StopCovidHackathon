@@ -3,36 +3,9 @@ import axios from 'axios';
 import { store } from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css';
 import 'animate.css';
-import Web3 from 'web3'
 
-
-const getWeb3 = new Promise(function(resolve, reject) {
-  // Wait for loading completion before loading web3, to be sure it's
-  // already injected
-  window.addEventListener('load', function() {
-    var results
-    var web3 = window.web3
-    // Checking if Web3 has been injected by the browser MetaMask
-    if (typeof web3 !== 'undefined') {
-      // Use MetaMask's provider.
-      web3 = new Web3(web3.currentProvider)
-      results = {
-        web3: web3
-      }
-      console.log('Injected web3 detected.');
-      resolve(results)
-    } else {
-      // If no web3 is detected, then the local web3 provider is loaded.
-      var provider = new Web3.providers.HttpProvider('http://127.0.0.1:7545')
-      web3 = new Web3(provider)
-      results = {
-        web3: web3
-      }
-      console.log('No web3 instance injected, using Local web3.');
-      resolve(results)
-    }
-  })
-});
+import { default as Web3} from 'web3';
+import Federated from "../Federated.json"
 
 
 class UploadScreen extends Component {
@@ -43,19 +16,52 @@ class UploadScreen extends Component {
       selectedFile: null,
       training: false,
       training_completed: false,
-      web3: null
+      web3: null,
+      federatedContract: null
     }
   }
 
+  async  loadWeb3() {
+    if (window.ethereum) {
+      window.web3 = new Web3(window.ethereum)
+      await window.ethereum.enable()
+    }
+    else if (window.web3) {
+      window.web3 = new Web3(window.web3.currentProvider)
+    }
+    else {
+      window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!')
+    }
 
-  componentDidMount() {
-    getWeb3.then(w => {
-      console.log(w);
-      this.setState((state) => {
-        return {web3: w}
-      });
-      console.log(this.state);
+    this.setState({
+      web3: window.web3
     })
+  }
+
+  async  loadBlockchainData() {
+    const web3 = window.web3
+    // Load account
+    const accounts = await web3.eth.getAccounts()
+    this.setState({ account: accounts[0] })
+    const networkId = await web3.eth.net.getId()
+    const networkData = Federated.networks[networkId]
+    if(networkData) {
+      const federated = new web3.eth.Contract(Federated.abi, networkData.address)
+      console.log(federated)
+      this.setState({
+        federatedContract: federated
+      })
+    } else {
+      window.alert('Contract not deployed to detected network.')
+    }
+  }
+
+  // async componentWillMount() {
+  async componentDidMount() {
+
+    await this.loadWeb3()
+    await this.loadBlockchainData()
+
   }
 
   checkMimeType = (event) => {
@@ -143,7 +149,7 @@ class UploadScreen extends Component {
       });
   }
 
-  onClickHandler = () => {
+  onClickHandler = async () => {
 
     store.addNotification({
       title: 'Upload successful',
@@ -163,6 +169,27 @@ class UploadScreen extends Component {
 
     const data = new FormData();
     data.append('model_file', this.state.selectedFile);
+
+    const currentWeb3 = this.state.web3;
+
+    const valueToSend = currentWeb3.utils.toWei("1", 'Ether');
+    const accounts = await currentWeb3.eth.getAccounts();
+    const federatedContract = this.state.federatedContract.methods;
+
+    const reader = new FileReader();
+
+    reader.onload = function () {
+      const hexContent = currentWeb3.utils.toHex(reader.result);
+      const hashResult = currentWeb3.utils.soliditySha3(hexContent);
+      console.log(hashResult);
+
+      federatedContract.request_training(hashResult)
+          .send( {from: accounts[0], value: valueToSend} )
+          .catch(err => console.log("Error ", err));
+
+    };
+    reader.readAsBinaryString(this.state.selectedFile)
+
 
     let accuracy;
     let contrib_a;
